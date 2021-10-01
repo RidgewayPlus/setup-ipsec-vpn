@@ -75,13 +75,13 @@ check_os() {
   if grep -qs "release 7" "$rh_file"; then
     os_ver=7
   elif grep -qs "release 8" "$rh_file"; then
-    #os_ver=8
-    #grep -qi stream "$rh_file" && os_ver=8s
-    #grep -qi rocky "$rh_file" && os_type=rocky
-    #grep -qi alma "$rh_file" && os_type=alma
-  #elif grep -qs "Amazon Linux release 2" /etc/system-release; then
-    #os_type=amzn
-    #os_ver=2
+    os_ver=8
+    grep -qi stream "$rh_file" && os_ver=8s
+    grep -qi rocky "$rh_file" && os_type=rocky
+    grep -qi alma "$rh_file" && os_type=alma
+  elif grep -qs "Amazon Linux release 2" /etc/system-release; then
+    os_type=amzn
+    os_ver=2
   else
     os_type=$(lsb_release -si 2>/dev/null)
     [ -z "$os_type" ] && [ -f /etc/os-release ] && os_type=$(. /etc/os-release && printf '%s' "$ID")
@@ -121,30 +121,7 @@ EOF
   fi
 }
 
-check_iface() {
-  def_iface=$(route 2>/dev/null | grep -m 1 '^default' | grep -o '[^ ]*$')
-  if [ "$os_type" != "alpine" ]; then
-    [ -z "$def_iface" ] && def_iface=$(ip -4 route list 0/0 2>/dev/null | grep -m 1 -Po '(?<=dev )(\S+)')
-  fi
-  def_state=$(cat "/sys/class/net/$def_iface/operstate" 2>/dev/null)
-  check_wl=0
-  if [ -n "$def_state" ] && [ "$def_state" != "down" ]; then
-    if [ "$os_type" = "ubuntu" ] || [ "$os_type" = "debian" ] || [ "$os_type" = "raspbian" ]; then
-      if ! uname -m | grep -qi -e '^arm' -e '^aarch64'; then
-        check_wl=1
-      fi
-    else
-      check_wl=1
-    fi
-  fi
-  if [ "$check_wl" = "1" ]; then
-    case $def_iface in
-      wl*)
-        exiterr "Wireless interface '$def_iface' detected. DO NOT run this script on your PC or Mac!"
-        ;;
-    esac
-  fi
-}
+
 
 check_creds() {
   [ -n "$YOUR_IPSEC_PSK" ] && VPN_IPSEC_PSK="$YOUR_IPSEC_PSK"
