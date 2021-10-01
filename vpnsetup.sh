@@ -75,13 +75,13 @@ check_os() {
   if grep -qs "release 7" "$rh_file"; then
     os_ver=7
   elif grep -qs "release 8" "$rh_file"; then
-    os_ver=8
-    grep -qi stream "$rh_file" && os_ver=8s
-    grep -qi rocky "$rh_file" && os_type=rocky
-    grep -qi alma "$rh_file" && os_type=alma
-  elif grep -qs "Amazon Linux release 2" /etc/system-release; then
-    os_type=amzn
-    os_ver=2
+    #os_ver=8
+    #grep -qi stream "$rh_file" && os_ver=8s
+    #grep -qi rocky "$rh_file" && os_type=rocky
+    #grep -qi alma "$rh_file" && os_type=alma
+  #elif grep -qs "Amazon Linux release 2" /etc/system-release; then
+    #os_type=amzn
+    #os_ver=2
   else
     os_type=$(lsb_release -si 2>/dev/null)
     [ -z "$os_type" ] && [ -f /etc/os-release ] && os_type=$(. /etc/os-release && printf '%s' "$ID")
